@@ -1,4 +1,4 @@
-module example.com/m/v2
+module mongoapi
 
 go 1.20
 
