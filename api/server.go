@@ -1,7 +1,17 @@
 package api
 
 import (
+	"context"
+	"fmt"
+	"os"
+
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
+
+	"github.com/joho/godotenv"
 )
 
 type avion struct {
@@ -57,6 +67,26 @@ func GetAlbums(c *gin.Context) {
 
 // postAlbums adds an album from JSON received in the request body.
 func PostAlbums(c *gin.Context) {
+	godotenv.Load()
+	var connection_string = os.Getenv("CONNECTION_STRING")
+
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(connection_string))
+	if err != nil {
+		panic(err)
+	}
+	if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
+		panic(err)
+	}
+
+	usersCollection := client.Database("testing").Collection("users")
+	user := bson.D{{"fullName", "User 1"}, {"age", 30}}
+	// insert the bson object using InsertOne()
+	result, err := usersCollection.InsertOne(context.TODO(), user)
+	if err != nil {
+		panic(err)
+	}
+	// display the id of the newly inserted object
+	fmt.Println(result.InsertedID)
 
 }
 
