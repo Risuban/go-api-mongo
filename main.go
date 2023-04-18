@@ -19,7 +19,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/albums", a.GetAlbums)
-	router.POST("/albums", a.PostAlbums)
+	router.POST("/api/reserva", a.PostReserva)
 	router.GET("/albums/:id", a.GetAlbumByID)
 	addr := server + ":" + port
 	router.Run(addr)

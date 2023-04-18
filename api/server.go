@@ -55,7 +55,7 @@ type pasajero struct {
 	Balances    balances             `json:"balances"`
 }
 
-type destino struct {
+type reserva struct {
 	Vuelos    []vuelos   `json:"vuelos"`
 	Pasajeros []pasajero `json:"pasajeros"`
 }
@@ -66,7 +66,15 @@ func GetAlbums(c *gin.Context) {
 }
 
 // postAlbums adds an album from JSON received in the request body.
-func PostAlbums(c *gin.Context) {
+func PostReserva(c *gin.Context) {
+	//recepción del payload
+	var payload avion
+	c.ShouldBindJSON(&payload)
+	fmt.Printf(payload.Modelo)
+	fmt.Printf(payload.Numero_de_serie)
+	fmt.Printf(payload.Stock_de_pasajeros)
+	//out, err := bson.MarshalExtJSON(payload, false, false)
+	//detalles de la conexión con el mongo
 	godotenv.Load()
 	var connection_string = os.Getenv("CONNECTION_STRING")
 
@@ -79,7 +87,7 @@ func PostAlbums(c *gin.Context) {
 	}
 
 	usersCollection := client.Database("testing").Collection("users")
-	user := bson.D{{"fullName", "User 1"}, {"age", 30}}
+	user := bson.D{{"modelo", payload.Modelo}, {"numero_de_serie", payload.Numero_de_serie}}
 	// insert the bson object using InsertOne()
 	result, err := usersCollection.InsertOne(context.TODO(), user)
 	if err != nil {
