@@ -20,9 +20,9 @@ type avion struct {
 	Stock_de_pasajeros string `json:"stock_de_pasajeros"`
 }
 type ancillar struct {
-	nombre string `json:"nombre"`
-	stock  string `json:"stock"`
-	ssr    string `json:"ssr"`
+	Nombre string `json:"nombre"`
+	Stock  string `json:"stock"`
+	Ssr    string `json:"ssr"`
 }
 type vuelos struct {
 	Vuelo        string     `json:"numero_vuelo"`
@@ -30,6 +30,7 @@ type vuelos struct {
 	Destino      string     `json: "destino" `
 	Hora_salida  string     `json:"hora_salida"`
 	Hora_llegada string     `json:"hora_llegada"`
+	Fecha        string     `json:"fecha"`
 	Avion        avion      `json:"avion"`
 	Ancillaries  []ancillar `json:"ancillaries"`
 }
@@ -43,16 +44,16 @@ type ancillaries_pasajero struct {
 }
 type balances struct {
 	Ancillaries_ida    int `json:"Ancillaries_ida"`
-	vuelo_ida          int `json:"vuelo_ida"`
-	ancillaries_vuelta int `json:"ancillaries_vuelta"`
-	vuelo_vuelta       int `json:"vuelo_vuelta"`
+	Vuelo_ida          int `json:"vuelo_ida"`
+	Ancillaries_vuelta int `json:"ancillaries_vuelta"`
+	Vuelo_vuelta       int `json:"vuelo_vuelta"`
 }
 type pasajero struct {
-	Nombre      string               `json:"nombre"`
-	Apellido    string               `json:"apellido"`
-	Edad        int                  `json:"edad"`
-	Ancillaries ancillaries_pasajero `json:"ancillaries"`
-	Balances    balances             `json:"balances"`
+	Nombre      string                 `json:"nombre"`
+	Apellido    string                 `json:"apellido"`
+	Edad        int                    `json:"edad"`
+	Ancillaries []ancillaries_pasajero `json:"ancillaries"`
+	Balances    balances               `json:"balances"`
 }
 
 type reserva struct {
@@ -68,12 +69,9 @@ func GetAlbums(c *gin.Context) {
 // postAlbums adds an album from JSON received in the request body.
 func PostReserva(c *gin.Context) {
 	//recepción del payload
-	var payload avion
+	var payload reserva
 	c.ShouldBindJSON(&payload)
-	fmt.Printf(payload.Modelo)
-	fmt.Printf(payload.Numero_de_serie)
-	fmt.Printf(payload.Stock_de_pasajeros)
-	//out, err := bson.MarshalExtJSON(payload, false, false)
+
 	//detalles de la conexión con el mongo
 	godotenv.Load()
 	var connection_string = os.Getenv("CONNECTION_STRING")
@@ -87,7 +85,7 @@ func PostReserva(c *gin.Context) {
 	}
 
 	usersCollection := client.Database("testing").Collection("users")
-	user := bson.D{{"modelo", payload.Modelo}, {"numero_de_serie", payload.Numero_de_serie}}
+	user := bson.D{{"vuelos", payload.Vuelos}, {"pasajeros", payload.Pasajeros}}
 	// insert the bson object using InsertOne()
 	result, err := usersCollection.InsertOne(context.TODO(), user)
 	if err != nil {
