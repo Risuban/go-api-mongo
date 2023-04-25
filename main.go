@@ -18,7 +18,7 @@ func main() {
 	var port = os.Getenv("PORT")
 
 	router := gin.Default()
-	router.GET("/albums", a.GetAlbums)
+	router.GET("/api/vuelo/:datos", a.GetVuelos)
 	router.POST("/api/reserva", a.PostReserva)
 	router.GET("/albums/:id", a.GetAlbumByID)
 	addr := server + ":" + port

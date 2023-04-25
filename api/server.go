@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -14,6 +15,11 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type Response struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
 type avion struct {
 	Modelo             string `json:"modelo"`
 	Numero_de_serie    string `json:"numero_de_serie"`
@@ -27,7 +33,7 @@ type ancillar struct {
 type vuelos struct {
 	Vuelo        string     `json:"numero_vuelo"`
 	Origen       string     `json:"origen"`
-	Destino      string     `json: "destino" `
+	Destino      string     `json:"destino" `
 	Hora_salida  string     `json:"hora_salida"`
 	Hora_llegada string     `json:"hora_llegada"`
 	Fecha        string     `json:"fecha"`
@@ -62,7 +68,19 @@ type reserva struct {
 }
 
 // getAlbums responds with the list of all albums as JSON.
-func GetAlbums(c *gin.Context) {
+func GetVuelos(c *gin.Context) {
+	info_vuelo, err := url.ParseQuery(c.Param("datos")[1:])
+	if err != nil {
+		// Handle the error...
+	}
+	//aquí hay que ver por que el GET no QUIERE PARCEAR
+	//uwu := info_vuelo.GET("origen")
+	// codigo de la respuesta que recibe el cliente
+	res := Response{}
+	res.Code = 200
+	res.Message = "uwu"
+
+	c.JSON(res.Code, res)
 
 }
 
@@ -91,8 +109,13 @@ func PostReserva(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	// display the id of the newly inserted object
+	// codigo de la respuesta que recibe el cliente
 	fmt.Println(result.InsertedID)
+	res := Response{}
+	res.Code = 200
+	res.Message = "Ok"
+
+	c.JSON(res.Code, res)
 
 }
 
