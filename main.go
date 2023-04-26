@@ -22,6 +22,7 @@ func main() {
 	router.POST("/api/reserva", a.PostReserva)
 	router.GET("/albums/:id", a.GetAlbumByID)
 	router.PUT("/api/vuelo", a.PutVuelo)
+	router.GET("/api/vuelont", a.GetVueloExtra)
 	addr := server + ":" + port
 	router.Run(addr)
 

@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -152,13 +153,51 @@ func PutVuelo(c *gin.Context) {
 	usersCollection := client.Database("Tarea1").Collection("vuelos")
 
 	filter := bson.D{{"numero_vuelo", numero_vuelo}, {"origen", origen}, {"destino", destino}, {"fecha", fecha}}
-	update := bson.D{{"$set", bson.D{{{"stock_de_pasajeros"}, payload.Num_pas}}}}
+	update := bson.D{{"$set", bson.D{{"stock_de_pasajeros", payload.Num_pas}}}}
 
 	result, err := usersCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(result)
+	res := Response{}
+	res.Code = 200
+	res.Message = "Ok"
+
+	c.JSON(res.Code, res)
+	client.Disconnect(context.TODO())
+}
+
+func GetVueloExtra(c *gin.Context) {
+	godotenv.Load()
+	var connection_string = os.Getenv("CONNECTION_STRING")
+	numero_vuelo := c.Query("numero_vuelo")
+	origen := c.Query("origen")
+	destino := c.Query("destino")
+	fecha := c.Query("fecha")
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(connection_string))
+	if err != nil {
+		panic(err)
+	}
+	if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
+		panic(err)
+	}
+	usersCollection := client.Database("testing").Collection("users")
+
+	filter := bson.D{{"numero_vuelo", numero_vuelo}, {"origen", origen}, {"destino", destino}, {"fecha", fecha}}
+	var result vuelos
+	err = usersCollection.FindOne(context.TODO(), filter).Decode(&result)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// This error means your query did not match any documents.
+			return
+		}
+		panic(err)
+	}
+
+	res2, a := json.Marshal(result)
+	fmt.Println(res2)
+	fmt.Println(a)
 	res := Response{}
 	res.Code = 200
 	res.Message = "Ok"
