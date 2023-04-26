@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"fmt"
-	"net/url"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -69,16 +68,25 @@ type reserva struct {
 
 // getAlbums responds with the list of all albums as JSON.
 func GetVuelos(c *gin.Context) {
-	info_vuelo, err := url.ParseQuery(c.Param("datos")[1:])
-	if err != nil {
-		// Handle the error...
-	}
+
+	// Retrieve the values of the "origen", "destino", and "fecha" query parameters
+	origen := c.Query("origen")
+	destino := c.Query("destino")
+	fecha := c.Query("fecha")
+	print(destino, fecha)
+	/*if err != nil {
+		res := Response{}
+		res.Code = 200
+		res.Message = "Error al procesar los parametros"
+
+		c.JSON(res.Code, res)
+	}*/
 	//aquí hay que ver por que el GET no QUIERE PARCEAR
 	//uwu := info_vuelo.GET("origen")
 	// codigo de la respuesta que recibe el cliente
 	res := Response{}
 	res.Code = 200
-	res.Message = "uwu"
+	res.Message = origen
 
 	c.JSON(res.Code, res)
 
@@ -116,6 +124,7 @@ func PostReserva(c *gin.Context) {
 	res.Message = "Ok"
 
 	c.JSON(res.Code, res)
+	client.Disconnect(context.TODO())
 
 }
 
