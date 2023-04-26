@@ -66,6 +66,10 @@ type reserva struct {
 	Pasajeros []pasajero `json:"pasajeros"`
 }
 
+type payload_vuelo_put struct {
+	Num_pas int `json:"stock_de_pasajeros"`
+}
+
 // getAlbums responds with the list of all albums as JSON.
 func GetVuelos(c *gin.Context) {
 
@@ -126,6 +130,41 @@ func PostReserva(c *gin.Context) {
 	c.JSON(res.Code, res)
 	client.Disconnect(context.TODO())
 
+}
+
+func PutVuelo(c *gin.Context) {
+	var payload payload_vuelo_put
+	c.ShouldBindJSON(&payload)
+	numero_vuelo := c.Query("numero_vuelo")
+	origen := c.Query("origen")
+	destino := c.Query("destino")
+	fecha := c.Query("fecha")
+
+	godotenv.Load()
+	var connection_string = os.Getenv("CONNECTION_STRING")
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(connection_string))
+	if err != nil {
+		panic(err)
+	}
+	if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
+		panic(err)
+	}
+	usersCollection := client.Database("Tarea1").Collection("vuelos")
+
+	filter := bson.D{{"numero_vuelo", numero_vuelo}, {"origen", origen}, {"destino", destino}, {"fecha", fecha}}
+	update := bson.D{{"$set", bson.D{{{"stock_de_pasajeros"}, payload.Num_pas}}}}
+
+	result, err := usersCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(result)
+	res := Response{}
+	res.Code = 200
+	res.Message = "Ok"
+
+	c.JSON(res.Code, res)
+	client.Disconnect(context.TODO())
 }
 
 // getAlbumByID locates the album whose ID value matches the id
