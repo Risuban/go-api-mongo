@@ -73,27 +73,53 @@ type payload_vuelo_put struct {
 
 // getAlbums responds with the list of all albums as JSON.
 func GetVuelos(c *gin.Context) {
-
-	// Retrieve the values of the "origen", "destino", and "fecha" query parameters
+	//traer información de la conexión
+	godotenv.Load()
+	var connection_string = os.Getenv("CONNECTION_STRING")
+	// traer las variables para traer vuelos
 	origen := c.Query("origen")
 	destino := c.Query("destino")
 	fecha := c.Query("fecha")
-	print(destino, fecha)
-	/*if err != nil {
-		res := Response{}
-		res.Code = 200
-		res.Message = "Error al procesar los parametros"
+	filter := bson.M{
+		"origen":  origen,
+		"destino": destino,
+		"fecha":   fecha,
+	}
+	//conexión
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(connection_string))
+	if err != nil {
+		panic(err)
+	}
+	//Establecer conexión con collection
+	usersCollection := client.Database("Tarea1").Collection("vuelos")
 
-		c.JSON(res.Code, res)
-	}*/
+	cursor, err := usersCollection.Find(context.TODO(), filter)
+	// chequear por errores
+	if err != nil {
+		panic(err)
+	}
+
+	// convert the cursor result to bson
+	var results []bson.M
+	// check for errors in the conversion
+	if err = cursor.All(context.TODO(), &results); err != nil {
+		panic(err)
+	}
+
+	// display the documents retrieved
+	fmt.Println("displaying all results from the search query")
+	for _, result := range results {
+		fmt.Println(result)
+	}
 	//aquí hay que ver por que el GET no QUIERE PARCEAR
-	//uwu := info_vuelo.GET("origen")
 	// codigo de la respuesta que recibe el cliente
 	res := Response{}
 	res.Code = 200
-	res.Message = origen
+	res.Message = "Exito"
+	res.Data = results
 
 	c.JSON(res.Code, res)
+	client.Disconnect(context.TODO())
 
 }
 
