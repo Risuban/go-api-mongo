@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -139,7 +140,6 @@ func PutVuelo(c *gin.Context) {
 	origen := c.Query("origen")
 	destino := c.Query("destino")
 	fecha := c.Query("fecha")
-	print(numero_vuelo, origen, destino, fecha)
 
 	godotenv.Load()
 	var connection_string = os.Getenv("CONNECTION_STRING")
@@ -152,44 +152,25 @@ func PutVuelo(c *gin.Context) {
 	}
 	usersCollection := client.Database("Tarea1").Collection("vuelos")
 
+	numero_vuelo2, _ := strconv.Atoi(numero_vuelo)
 	filter := bson.M{
-		"numero_vuelo": numero_vuelo,
+		"numero_vuelo": numero_vuelo2,
 		"origen":       origen,
 		"destino":      destino,
 		"fecha":        fecha,
 	}
+	fmt.Printf(numero_vuelo)
+	fmt.Printf(origen)
+	fmt.Printf(destino)
+	fmt.Printf(fecha)
 
-	var result1 bson.M
-	// var resultavion avion
-	err = usersCollection.FindOne(context.TODO(), filter).Decode(&result1)
+	update := bson.D{{"$set", bson.D{{"avion.stock_de_pasajeros", payload.Num_pas}}}}
+	result, err := usersCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			// This error means your query did not match any documents.
-			return
-		}
 		panic(err)
 	}
-	fmt.Println(result1)
+	fmt.Println(result)
 
-	// resultavion = result1.Avion
-	// resultavion.Stock_de_pasajeros = payload.Num_pas
-
-	// update := bson.M{
-	// 	"numero_vuelo": result1.Vuelo,
-	// 	"origen":       result1.Origen,
-	// 	"destino":      result1.Destino,
-	// 	"fecha":        result1.Fecha,
-	// 	"hora_llegada": result1.Hora_llegada,
-	// 	"hora_salida":  result1.Hora_salida,
-	// 	"ancillares":   result1.Ancillaries,
-	// 	"avion":        resultavion,
-	// }
-
-	// result, err := usersCollection.ReplaceOne(context.TODO(), filter, update)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Println(result)
 	res := Response{}
 	res.Code = 200
 	res.Message = "Ok"
@@ -197,44 +178,6 @@ func PutVuelo(c *gin.Context) {
 	c.JSON(res.Code, res)
 	client.Disconnect(context.TODO())
 }
-
-// func GetVueloExtra(c *gin.Context) {
-// 	godotenv.Load()
-// 	var connection_string = os.Getenv("CONNECTION_STRING")
-// 	numero_vuelo := c.Query("numero_vuelo")
-// 	origen := c.Query("origen")
-// 	destino := c.Query("destino")
-// 	fecha := c.Query("fecha")
-// 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(connection_string))
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
-// 		panic(err)
-// 	}
-// 	usersCollection := client.Database("testing").Collection("users")
-
-// 	filter := bson.D{{"numero_vuelo", numero_vuelo}, {"origen", origen}, {"destino", destino}, {"fecha", fecha}}
-// 	var result vuelos
-// 	err = usersCollection.FindOne(context.TODO(), filter).Decode(&result)
-// 	if err != nil {
-// 		if err == mongo.ErrNoDocuments {
-// 			// This error means your query did not match any documents.
-// 			return
-// 		}
-// 		panic(err)
-// 	}
-
-// 	res2, a := json.Marshal(result)
-// 	fmt.Println(res2)
-// 	fmt.Println(a)
-// 	res := Response{}
-// 	res.Code = 200
-// 	res.Message = "Ok"
-
-// 	c.JSON(res.Code, res)
-// 	client.Disconnect(context.TODO())
-// }
 
 // getAlbumByID locates the album whose ID value matches the id
 // parameter sent by the client, then returns that album as a response.
