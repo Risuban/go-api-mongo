@@ -20,7 +20,6 @@ func main() {
 	router := gin.Default()
 	router.GET("/api/vuelo", a.GetVuelos)
 	router.POST("/api/reserva", a.PostReserva)
-	router.GET("/albums/:id", a.GetAlbumByID)
 	router.PUT("/api/vuelo", a.PutVuelo)
 	addr := server + ":" + port
 	router.Run(addr)

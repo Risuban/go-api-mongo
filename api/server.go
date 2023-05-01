@@ -22,16 +22,16 @@ type Response struct {
 }
 type avion struct {
 	Modelo             string `json:"modelo"`
-	Numero_de_serie    string `json:"numero_de_serie"`
+	Numero_de_serie    int    `json:"numero_de_serie"`
 	Stock_de_pasajeros int    `json:"stock_de_pasajeros"`
 }
 type ancillar struct {
 	Nombre string `json:"nombre"`
-	Stock  string `json:"stock"`
+	Stock  int    `json:"stock"`
 	Ssr    string `json:"ssr"`
 }
 type vuelos struct {
-	Vuelo        string     `json:"numero_vuelo"`
+	Vuelo        int        `json:"numero_vuelo"`
 	Origen       string     `json:"origen"`
 	Destino      string     `json:"destino" `
 	Hora_salida  string     `json:"hora_salida"`
@@ -141,7 +141,7 @@ func PostReserva(c *gin.Context) {
 		panic(err)
 	}
 
-	usersCollection := client.Database("testing").Collection("users")
+	usersCollection := client.Database("Tarea1").Collection("reservas")
 	user := bson.D{{"vuelos", payload.Vuelos}, {"pasajeros", payload.Pasajeros}}
 	// insert the bson object using InsertOne()
 	result, err := usersCollection.InsertOne(context.TODO(), user)
@@ -185,22 +185,36 @@ func PutVuelo(c *gin.Context) {
 		"destino":      destino,
 		"fecha":        fecha,
 	}
-	fmt.Printf(numero_vuelo)
-	fmt.Printf(origen)
-	fmt.Printf(destino)
-	fmt.Printf(fecha)
 
 	update := bson.D{{"$set", bson.D{{"avion.stock_de_pasajeros", payload.Num_pas}}}}
 	result, err := usersCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		panic(err)
 	}
+	var cursor vuelos
+	problema := usersCollection.FindOne(context.TODO(), filter).Decode(&cursor)
+	// chequear por errores
+	if problema != nil {
+		panic(problema)
+	}
 	fmt.Println(result)
-
+	response := struct {
+		Vuelo        int    `json:"numero_vuelo"`
+		Origen       string `json:"origen"`
+		Destino      string `json:"destino"`
+		Hora_salida  string `json:"hora_salida"`
+		Hora_llegada string `json:"hora_llegada"`
+	}{
+		Vuelo:        cursor.Vuelo,
+		Origen:       cursor.Origen,
+		Destino:      cursor.Destino,
+		Hora_salida:  cursor.Hora_salida,
+		Hora_llegada: cursor.Hora_llegada,
+	}
 	res := Response{}
 	res.Code = 200
 	res.Message = "Ok"
-
+	res.Data = response
 	c.JSON(res.Code, res)
 	client.Disconnect(context.TODO())
 }
