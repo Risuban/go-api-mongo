@@ -1,0 +1,61 @@
+{
+    "numero_vuelo": "323",
+    "origen": "IQQ",
+    "destino": "SCL",
+    "hora_salida": "20:38",
+    "hora_llegada": "22:50",
+    "fecha": "14/04/2023",
+    "avion": {
+    "modelo": "A320neo",
+    "numero_de_serie": "12345",
+    "stock_de_pasajeros": 90
+    },
+    "ancillaries": [
+    {
+     "nombre": "Equipaje de mano",
+     "stock": 68,
+     "ssr": "BGH"
+    },
+    {
+     "nombre": "Equipaje de bodega",
+     "stock": 92,
+     "ssr": "BGR"
+    },
+    {
+     "nombre": "Asiento",
+     "stock": 40,
+     "ssr": "STDF"
+    },
+    {
+     "nombre": "Embarque y Check In prioritario",
+     "stock": 79,
+     "ssr": "PAXS"
+    },
+    {
+     "nombre": "Mascota en cabina",
+     "stock": 4,
+     "ssr": "PTCR"
+    },
+    {
+     "nombre": "Mascota en bodega",
+     "stock": 12,
+     "ssr": "AVIH"
+    },
+    {
+     "nombre": "Equipaje especial",
+     "stock": 71,
+     "ssr": "SPML"
+    },
+    {
+     "nombre": "Acceso a Salón VIP",
+     "stock": 36,
+     "ssr": "LNGE"
+    },
+    {
+     "nombre": "Wi-Fi a bordo",
+     "stock": 57,
+     "ssr": "WIFI"
+    }
+    ]
+}
+    

@@ -1,0 +1,55 @@
+{
+    "vuelos": [
+    {
+    "numero_vuelo": "323",
+    "origen": "IQQ",
+    "destino": "SCL",
+    "hora_salida": "20:38",
+    "hora_llegada": "22:50",
+    "fecha": "14/04/2023"
+    },
+    {
+    "numero_vuelo": "460",
+    "origen": "SCL",
+    "destino": "IQQ",
+    "hora_salida": "14:54",
+    "hora_llegada": "17:24",
+    "fecha": "21/04/2023"
+    }
+    ],
+    "pasajeros": [
+    {
+    "nombre": "Juan",
+    "apellido": "Rojas",
+    "edad": 25,
+    "ancillaries": [
+    {
+    "ida": [
+    {
+    "ssr": "BGH",
+    "cantidad": 2
+    },
+    {
+    "ssr": "PAXS",
+    "cantidad": 1
+    }
+    ]
+    },
+    {
+    "vuelta": [
+    {
+    "ssr": "STDF",
+    "cantidad": 1
+    }
+    ]
+    }
+    ],
+    "balances": {
+    "ancillaries_ida": 22000,
+    "vuelo_ida": 77880,
+    "ancillaries_vuelta": 5000,
+    "vuelo_vuelta": 88500
+    }
+    }
+    ]
+    }
